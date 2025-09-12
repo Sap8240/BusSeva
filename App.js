@@ -9,7 +9,7 @@ import WelcomeScreen from './screens/WelcomeScreen' ;
 import DetailScreen from './screens/DetailScreen';
 import ResultScreen from './screens/ResultScreen'; // Import the new screen
 import Sigin from './screens/Signin'; // Import the Signin screen
-import Login from './screens/Login'; // Import the Login screen
+import DriverScreen from './screens/DriverScreen'; // Import the Driver screen
 
 const Stack = createNativeStackNavigator();
 
@@ -38,7 +38,7 @@ export default function App() {
           options={{ title: 'Welcome to Busseva' }}
         />
         <Stack.Screen
-          name="Detail"
+          name="DetailScreen"
           component={DetailScreen}
           options={{ headerShown: false }}
         />
@@ -54,10 +54,11 @@ export default function App() {
           options={{ headerShown: false }}   // ✅ Hides header + keeps statusbar off
         />
         <Stack.Screen
-          name="Login"
-          component={Login}
+          name="DriverScreen"
+          component={DriverScreen}
           options={{ headerShown: false }}   // ✅ Hides header + keeps statusbar off
         />
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -25,6 +25,9 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": "An app to view bus schedules"
+    "description": "An app to view bus schedules",
+    "plugins": [
+      "expo-font"
+    ]
   }
 }

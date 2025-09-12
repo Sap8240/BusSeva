@@ -8,19 +8,28 @@ import {
   TouchableOpacity,
   ScrollView,
   StatusBar,
+  ImageBackground,
+  Platform,
 } from 'react-native';
+import DetailScreen from '../screens/DetailScreen';
 
-// Import WelcomeScreen from the separate file
-import WelcomeScreen from '../screens/WelcomeScreen.js';
+// --- Placeholder for WelcomeScreen ---
+// To make the app runnable, I've created a simple WelcomeScreen here.
+const WelcomeScreen = ({ navigation }) => (
+  <View style={[styles.screenContainer, { justifyContent: 'center', backgroundColor: '#1A1A1A' }]}>
+    <Text style={styles.title}>Welcome to the App!</Text>
+    <Text style={styles.homeSubtitle}>This is the main content area.</Text>
+  </View>
+);
 
-// --- Reusable Components ---
-const FormInput = ({ label, placeholder, secureTextEntry = false, keyboardType = 'default', value, onChangeText }) => (
+
+// --- Reusable Components (Restyled) ---
+const FormInput = ({ placeholder, secureTextEntry = false, keyboardType = 'default', value, onChangeText }) => (
   <View style={styles.inputContainer}>
-    <Text style={styles.inputLabel}>{label}</Text>
     <TextInput
       style={styles.input}
       placeholder={placeholder}
-      placeholderTextColor="#6b6a6aff"
+      placeholderTextColor="#A0A0A0"
       secureTextEntry={secureTextEntry}
       keyboardType={keyboardType}
       value={value}
@@ -36,13 +45,21 @@ const PrimaryButton = ({ label, onPress }) => (
   </TouchableOpacity>
 );
 
-const SecondaryButton = ({ label, onPress }) => (
-  <TouchableOpacity style={styles.buttonSecondary} onPress={onPress}>
-    <Text style={styles.buttonSecondaryText}>{label}</Text>
-  </TouchableOpacity>
+
+// --- Screens (Restyled) ---
+const AuthScreenWrapper = ({ children }) => (
+  <ImageBackground
+    source={require('../assets/background.jpg')} // <-- Use your local image here
+    style={styles.backgroundImage}
+    resizeMode="cover"
+  >
+    <View style={styles.overlay} />
+    <View style={styles.bottomContainer}>
+      {children}
+    </View>
+  </ImageBackground>
 );
 
-// --- Screens ---
 const SignUpScreen = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -59,88 +76,83 @@ const SignUpScreen = ({ navigation }) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.screenContainer} keyboardShouldPersistTaps="handled">
-      <Text style={styles.title}>Sign up</Text>
-      <FormInput label="Name*" placeholder="Enter your name" value={name} onChangeText={setName} />
-      <FormInput label="Email*" placeholder="Enter your Email" keyboardType="email-address" value={email} onChangeText={setEmail} />
-      <FormInput label="Password*" placeholder="Create a Password" secureTextEntry={true} value={password} onChangeText={setPassword} />
-      <Text style={styles.passwordHint}>*Must be at least 8 Character</Text>
-      <FormInput label="Phone Number*" placeholder="Enter your Phone No" keyboardType="phone-pad" value={phone} onChangeText={setPhone} />
+    <AuthScreenWrapper>
+      <View style={styles.formContainer}>
+        <Text style={styles.title}>Create Account</Text>
+        <Text style={styles.subtitle}>Start your seamless journey with us.</Text>
 
-      <View style={styles.buttonGroup}>
-        <PrimaryButton label="SIGN UP" onPress={handleSignUp} />
-        <SecondaryButton label="SIGN UP WITH GOOGLE" onPress={() => console.log('Sign up with Google pressed')} />
+        <FormInput placeholder="Enter your Name" value={name} onChangeText={setName} />
+        <FormInput placeholder="Enter your Email" keyboardType="email-address" value={email} onChangeText={setEmail} />
+        <FormInput placeholder="Create a Password" secureTextEntry={true} value={password} onChangeText={setPassword} />
+        <FormInput placeholder="Enter your Phone Number" keyboardType="phone-pad" value={phone} onChangeText={setPhone} />
+
+        <View style={{marginTop: 20, width: '100%'}}>
+            <PrimaryButton label="SIGN UP" onPress={handleSignUp} />
+        </View>
+
+        <TouchableOpacity onPress={() => navigation.navigate('Login')} style={{marginTop: 20}}>
+          <Text style={styles.footerText}>
+            Already have an account? <Text style={styles.linkText}>Log in</Text>
+          </Text>
+        </TouchableOpacity>
       </View>
-
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.footerText}>
-          Already have an account? <Text style={styles.linkText}>Log in</Text>
-        </Text>
-      </TouchableOpacity>
-    </ScrollView>
+    </AuthScreenWrapper>
   );
 };
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
 
   const handleLogin = () => {
     if (email && password) {
       console.log("Logging in with:", { email, password });
-      navigation.navigate('Home');
+      navigation.navigate('DetailScreen'); // Navigate to DetailScreen after login
     } else {
       console.log("Email or password missing");
     }
   };
 
   return (
-    <View style={styles.screenContainer}>
-      <Text style={styles.title}>Log in</Text>
-      <FormInput label="Email" placeholder="Enter your email" keyboardType="email-address" value={email} onChangeText={setEmail} />
-      <FormInput label="Password" placeholder="Enter your Password" secureTextEntry={true} value={password} onChangeText={setPassword} />
+    <AuthScreenWrapper>
+        <View style={styles.formContainer}>
+            <Text style={styles.title}>Log In</Text>
+            <Text style={styles.subtitle}>Log in to continue your seamless journey</Text>
 
-      <View style={styles.rememberMeContainer}>
-        <TouchableOpacity style={styles.checkbox} onPress={() => setRememberMe(!rememberMe)}>
-          {rememberMe && <View style={styles.checkboxChecked} />}
-        </TouchableOpacity>
-        <Text style={styles.rememberMeText}>Remember Me</Text>
-      </View>
+            <FormInput placeholder="Enter Your Email" keyboardType="email-address" value={email} onChangeText={setEmail} />
+            <FormInput placeholder="Enter Your Password" secureTextEntry={true} value={password} onChangeText={setPassword} />
 
-      <View style={{ width: '70%', marginTop: 50, }}>
-        <PrimaryButton label="LOG IN" onPress={handleLogin} />
-      </View>
+            <View style={{marginTop: 20, width: '100%'}}>
+                <PrimaryButton label="LOGIN" onPress={handleLogin} />
+            </View>
 
-      <TouchableOpacity style={{ marginTop: 20 }}>
-        <Text style={styles.linkText}>Forgot password?</Text>
-      </TouchableOpacity>
 
-      <View style={styles.loginFooter}>
-        <PrimaryButton label="CREATE AN ACCOUNT" onPress={() => navigation.navigate('SignUp')} />
-      </View>
-    </View>
+            <TouchableOpacity style={{ marginTop: 20 }}>
+                <Text style={styles.linkText}>Forgot Password?</Text>
+            </TouchableOpacity>
+
+             <TouchableOpacity onPress={() => navigation.navigate('SignUp')} style={{marginTop: 40}}>
+                <Text style={styles.footerText}>
+                    Don't have an account? <Text style={styles.linkText}>Sign up</Text>
+                </Text>
+            </TouchableOpacity>
+        </View>
+    </AuthScreenWrapper>
   );
 };
 
 const HomeScreen = ({ navigation }) => {
   return (
-    <View style={[styles.screenContainer, { justifyContent: 'center' }]}>
+    <View style={[styles.screenContainer, { justifyContent: 'center', backgroundColor: '#1A1A1A' }]}>
       <Text style={styles.title}>Welcome!</Text>
       <Text style={styles.homeSubtitle}>You have successfully logged in.</Text>
-      <View style={{ width: '80%', marginTop: 40 }}>
-        <PrimaryButton
-          label="Continue to our App"
-          onPress={() => navigation.navigate('WelcomeScreen')}
-        />
-      </View>
     </View>
   );
 };
 
 // --- Main App Component with Navigation ---
 export default function App() {
-  const [currentPage, setCurrentPage] = useState('SignUp');
+  const [currentPage, setCurrentPage] = useState('Login'); // Start with Login screen
 
   const navigation = {
     navigate: (page) => setCurrentPage(page),
@@ -152,19 +164,20 @@ export default function App() {
         return <SignUpScreen navigation={navigation} />;
       case 'Login':
         return <LoginScreen navigation={navigation} />;
+      case 'DetailScreen':
+        return <DetailScreen navigation={navigation} />; // <-- Add this
       case 'Home':
         return <HomeScreen navigation={navigation} />;
       case 'WelcomeScreen':
         return <WelcomeScreen navigation={navigation} />;
       default:
-        return <SignUpScreen navigation={navigation} />;
+        return <LoginScreen navigation={navigation} />;
     }
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* Hide status bar completely */}
-      <StatusBar hidden={true} translucent={true} />
+      <StatusBar barStyle="light-content" />
       {renderPage()}
     </SafeAreaView>
   );
@@ -174,70 +187,86 @@ export default function App() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#fffdfd1c',
+  },
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    justifyContent: 'flex-end', // Ensures children are at the bottom
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.62)', // Dark overlay
+  },
+  bottomContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
   },
   screenContainer: {
     flexGrow: 1,
-    padding: 24,
-    marginTop: 100,
-    backgroundColor: '#FFFFFF',
+    justifyContent: 'flex-end', // Pushes content to bottom
     alignItems: 'center',
-    // removed paddingTop: 50
+    padding: 24,
+  },
+  formContainer: {
+    width: '100%',
+    padding: 24,
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    backgroundColor: 'rgba(26, 26, 26, 0.76)', // More transparent
+    alignItems: 'center',
+    marginBottom: Platform.OS === 'ios' ? 32 : 16,
+    // Optional: Add shadow for iOS and elevation for Android
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 12,
+    // Optional: Add blur effect if using expo-blur or similar
+    // overflow: 'hidden',
   },
   title: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 'bold',
-    color: '#1A1A1A',
+    color: '#FFFFFF',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#E0E0E0',
     marginBottom: 40,
+    textAlign: 'center',
   },
   inputContainer: {
     width: '100%',
-    marginBottom: 20,
-  },
-  inputLabel: {
-    fontSize: 14,
-    color: '#1A1A1A',
-    marginBottom: 8,
-    fontWeight: '500',
-  },
-  login: {
-    backgroundColor: '#ff049fff',
-    borderRadius: 12,
-    paddingVertical: 16,
-    alignItems: 'center',
+    marginBottom: 16,
+    backgroundColor: 'rgba(255,255,255,0.08)', // Slightly more transparent
+    borderRadius: 16,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.15)',
   },
   input: {
-    backgroundColor: '#F5F5F5',
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
+    backgroundColor: 'transparent',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 16,
-    color: '#1A1A1A',
-  },
-  passwordHint: {
-    width: '100%',
-    textAlign: 'left',
-    fontSize: 12,
-    color: '#888888',
-    marginTop: -12,
-    marginBottom: 20,
-  },
-  buttonGroup: {
-    width: '100%',
-    marginTop: 20,
+    color: '#FFFFFF',
+    borderWidth: 0,
   },
   buttonPrimary: {
-    backgroundColor: '#6A5AED',
+    backgroundColor: '#E53935', // Vibrant red color
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
-    marginBottom: 16,
-    shadowColor: "#6A5AED",
+    shadowColor: "#E53935",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.30,
-    shadowRadius: 4.65,
+    shadowOpacity: 0.4,
+    shadowRadius: 5,
     elevation: 8,
   },
   buttonPrimaryText: {
@@ -245,62 +274,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  buttonSecondary: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    paddingVertical: 16,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-  },
-  buttonSecondaryText: {
-    color: '#1A1A1A',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
   footerText: {
-    marginTop: 30,
     fontSize: 14,
-    color: '#888888',
+    color: '#A0A0A0',
   },
   linkText: {
-    color: '#6A5AED',
+    color: '#E53935',
     fontWeight: 'bold',
-  },
-  rememberMeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    marginBottom: 20,
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderWidth: 1,
-    borderColor: '#A9A9A9',
-    borderRadius: 4,
-    marginRight: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  checkboxChecked: {
-    width: 12,
-    height: 12,
-    backgroundColor: '#6A5AED',
-    borderRadius: 2,
-  },
-  rememberMeText: {
-    color: '#555',
-  },
-  loginFooter: {
-    position: 'absolute',
-    bottom: 40,
-    width: '100%',
-    paddingHorizontal: 24,
   },
   homeSubtitle: {
     fontSize: 18,
-    color: '#555',
+    color: '#A0A0A0',
     textAlign: 'center',
     marginTop: 8,
   },
